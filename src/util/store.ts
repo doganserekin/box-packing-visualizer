@@ -185,8 +185,17 @@ export const useStore = create<State>((set, get) => ({
     const selectedProducts = s.productCatalog.filter(p => s.selectedProductIds.includes(p.id))
     if (selectedProducts.length === 0) return
     set({ isWorking: true, statusMessage: 'Hesaplanıyor…' })
+    
+    // Watchdog timeout
+    const watchdog = setTimeout(() => {
+      set({ isWorking: false, statusMessage: 'Hesaplama uzun sürdü, lütfen tekrar deneyin.' })
+    }, 60000)
+    
     worker.postMessage({ type: 'pack', boxes: s.boxCatalog, products: selectedProducts })
     worker.onmessage = (e) => {
+      // Clear watchdog when we get result
+      clearTimeout(watchdog)
+      
       const result = e.data
       if (!result) {
         set({ selectedBoxId: null, placedItems: [], suggestedPlacements: [], suggestionIndex: 0, statusMessage: 'Seçilen ürünler mevcut kolilere sığmıyor. Daha büyük bir koli ekleyin veya seçim sayısını azaltın.', isWorking: false })
@@ -194,10 +203,6 @@ export const useStore = create<State>((set, get) => ({
       }
       set({ selectedBoxId: result.box.id, placedItems: [], suggestedPlacements: result.placed, suggestionIndex: 0, statusMessage: null, isWorking: false })
     }
-    // Watchdog remains
-    const watchdog = setTimeout(() => {
-      set({ isWorking: false, statusMessage: 'Hesaplama uzun sürdü, lütfen tekrar deneyin.' })
-    }, 60000)
   },
   confirmNextPlacement: () => set(s => {
     if (s.suggestionIndex >= s.suggestedPlacements.length) return {}
