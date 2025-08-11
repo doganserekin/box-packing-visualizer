@@ -22,6 +22,7 @@ export function PackingUI() {
     goToPreviousSuggestion,
     statusMessage,
     resetAll,
+    isWorking,
   } = useStore()
 
   const [newBox, setNewBox] = React.useState({ w: 20, h: 15, d: 30 })
@@ -120,7 +121,9 @@ export function PackingUI() {
         </div>
 
         <div className="section row">
-          <button className="primary" onClick={chooseBestBoxAndPack}>Koli öner ve dizmek için tarif et</button>
+          <button className="primary" onClick={chooseBestBoxAndPack} disabled={isWorking}>
+            {isWorking ? 'Hesaplanıyor…' : 'Koli öner ve dizmek için tarif et'}
+          </button>
           <button onClick={resetAll}>Sıfırla</button>
         </div>
       </aside>
@@ -166,6 +169,13 @@ export function PackingUI() {
           )
         })()}
       </section>
+      {isWorking && (
+        <div className="floating-controls" style={{ pointerEvents: 'none', top: 60 }}>
+          <div style={{ background: 'rgba(0,0,0,0.45)', padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)' }}>
+            Hesaplanıyor…
+          </div>
+        </div>
+      )}
     </>
   )
 }

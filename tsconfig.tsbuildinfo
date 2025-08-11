@@ -1,1 +1,1 @@
-{"root":["./src/main.tsx","./src/ui/app.tsx","./src/ui/packingui.tsx","./src/util/id.ts","./src/util/store.ts","./src/util/units.ts","./src/viz/packingscene.tsx"],"version":"5.9.2"}
+{"root":["./src/main.tsx","./src/ui/app.tsx","./src/ui/packingui.tsx","./src/util/id.ts","./src/util/packingworker.ts","./src/util/store.ts","./src/util/units.ts","./src/viz/packingscene.tsx"],"version":"5.9.2"}
