@@ -27,6 +27,29 @@ export function PackingUI() {
 
   const [newBox, setNewBox] = React.useState({ w: 20, h: 15, d: 30 })
   const [qty, setQty] = React.useState(8)
+  
+  // Add refs for scrolling to selected boxes
+  const boxListRef = React.useRef<HTMLDivElement>(null)
+  const selectedBoxRowRef = React.useRef<HTMLTableRowElement>(null)
+
+  // Auto-scroll to selected box when selection changes
+  React.useEffect(() => {
+    if (selectedBoxId && selectedBoxRowRef.current && boxListRef.current) {
+      const container = boxListRef.current
+      const row = selectedBoxRowRef.current
+      
+      // Calculate scroll position to center the selected row
+      const containerHeight = container.clientHeight
+      const rowTop = row.offsetTop
+      const rowHeight = row.clientHeight
+      const scrollTop = rowTop - (containerHeight / 2) + (rowHeight / 2)
+      
+      container.scrollTo({
+        top: Math.max(0, scrollTop),
+        behavior: 'smooth'
+      })
+    }
+  }, [selectedBoxId])
 
   return (
     <>
@@ -51,11 +74,16 @@ export function PackingUI() {
             <tbody>
             </tbody>
           </table>
-          <div style={{ maxHeight: 220, overflow: 'auto', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8 }}>
+          <div ref={boxListRef} style={{ maxHeight: 220, overflow: 'auto', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <tbody>
                 {boxCatalog.map(b => (
-                  <tr key={b.id} onClick={() => setSelectedBoxId(b.id)} style={{ cursor: 'pointer', background: b.id === selectedBoxId ? 'rgba(91, 140, 255, .2)' : 'transparent' }}>
+                  <tr 
+                    key={b.id} 
+                    ref={b.id === selectedBoxId ? selectedBoxRowRef : null}
+                    onClick={() => setSelectedBoxId(b.id)} 
+                    style={{ cursor: 'pointer', background: b.id === selectedBoxId ? 'rgba(91, 140, 255, .2)' : 'transparent' }}
+                  >
                     <td style={{ padding: '6px 8px' }}>{b.widthCm}</td>
                     <td style={{ padding: '6px 8px' }}>{b.depthCm}</td>
                     <td style={{ padding: '6px 8px' }}>{b.heightCm}</td>

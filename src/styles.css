@@ -98,6 +98,11 @@ td.nowrap, th.nowrap { white-space: nowrap; }
   gap: 8px;
 }
 
+/* Support for left positioning for box dimensions overlay */
+.floating-controls[style*="left"] {
+  right: auto;
+}
+
 /* Scrollbar theming */
 * {
   scrollbar-width: thin;
